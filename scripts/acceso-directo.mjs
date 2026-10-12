@@ -34,7 +34,9 @@ const script = `
 try
   ${probar}
 on error
-  do shell script "cd " & ${q(RAIZ)} & " && PATH=" & ${q(PATH)} & " PORT=${PUERTO} NO_ABRIR=1 nohup " & ${q(process.execPath)} & " server.js > " & ${q(path.join(os.tmpdir(), 'estudio-videos.log'))} & " 2>&1 &"
+  -- Todo va en una subshell con las redirecciones afuera: si no, "do shell script" se queda
+  -- esperando la salida de node y el applet nunca llega a abrir el navegador.
+  do shell script "(cd " & ${q(RAIZ)} & " && PATH=" & ${q(PATH)} & " PORT=${PUERTO} NO_ABRIR=1 exec nohup " & ${q(process.execPath)} & " server.js) > " & ${q(path.join(os.tmpdir(), 'estudio-videos.log'))} & " 2>&1 < /dev/null &"
   repeat 40 times
     delay 0.5
     try

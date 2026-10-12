@@ -1,0 +1,4 @@
+node_modules/
+espacios/
+config.local.json
+.DS_Store

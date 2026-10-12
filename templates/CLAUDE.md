@@ -12,6 +12,7 @@ Esta carpeta es un proyecto del Estudio de videos: una marca o identidad visual 
 
 ## Herramientas
 - **HyperFrames** (`npx hyperframes ...` y sus skills, entrando por `/hyperframes`) para todo lo que se pueda hacer con código: motion graphics, tipografía, logos, gráficos, subtítulos, transiciones, montaje y render. El render es local y gratis.
+- **Epidemic Sound (MCP)** para música, efectos de sonido y voces cuando el proyecto no trae los suyos: busca por mood, BPM o referencia, recorta a la duración del video y descarga solo la pista elegida.
 - **Higgsfield (MCP)** solo para lo que el código no puede hacer: tomas realistas, personas, fotografía de producto, voz, upscale, reencuadre.
 
 ## Ahorro de recursos (obligatorio)

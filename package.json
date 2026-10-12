@@ -4,11 +4,14 @@
   "description": "Estudio local para crear videos y piezas para redes sociales con HyperFrames, Higgsfield y Claude Code",
   "type": "module",
   "private": true,
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node server.js",
     "setup": "node scripts/setup.mjs",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "acceso-directo": "node scripts/acceso-directo.mjs"
   },
   "dependencies": {
     "express": "^5.1.0",

@@ -28,3 +28,14 @@ test('herramientas de Higgsfield según fase y motor', async () => {
   assert.ok(!sb.some((t) => /generate_video$/.test(t) || t === 'mcp__Higgsfield'));
   assert.ok(!herramientasPara('produccion', [], 'hyperframes').some((t) => /Higgsfield/.test(t)));
 });
+
+test('detecta conectores en claude mcp list y limita Epidemic Sound en storyboard', async () => {
+  const { servidoresDesdeLista, herramientasPara } = await import('../lib/runner.js');
+  const srv = servidoresDesdeLista('claude.ai Higgsfield: https://mcp.higgsfield.ai/mcp (HTTP) - ✔ Connected\nclaude.ai Epidemic Sound: https://www.epidemicsound.com/a/mcp-service/mcp (HTTP) - ✔ Connected\n');
+  assert.ok(srv.epidemic.includes('mcp__claude_ai_Epidemic_Sound'));
+  const sb = herramientasPara('storyboard', [], 'auto', srv);
+  assert.ok(sb.includes('mcp__claude_ai_Epidemic_Sound__SearchRecordings'));
+  assert.ok(!sb.some((t) => /DownloadRecording$/.test(t) || t === 'mcp__claude_ai_Epidemic_Sound'));
+  const prod = herramientasPara('produccion', [], 'hyperframes', srv);
+  assert.ok(prod.includes('mcp__claude_ai_Epidemic_Sound') && !prod.some((t) => /Higgsfield/.test(t)));
+});

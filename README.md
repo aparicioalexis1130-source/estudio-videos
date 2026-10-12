@@ -26,6 +26,7 @@ Interfaz local para crear videos y piezas para redes sociales con la identidad d
 - [Node.js 22+](https://nodejs.org)
 - FFmpeg (macOS: `brew install ffmpeg` · Windows: `winget install ffmpeg`)
 - [Claude Code](https://claude.com/claude-code) con tu cuenta iniciada
+- (Opcional) Epidemic Sound conectado a Claude Code para música y efectos.
 - Higgsfield disponible en Claude Code: sirve el conector de Higgsfield de tu cuenta de claude.ai (aparece como `claude_ai_Higgsfield`) o el MCP agregado a mano (`Higgsfield`). Compruébalo con `claude mcp list`
 
 ## Instalación
@@ -36,6 +37,15 @@ npm install
 npm run setup   # revisa requisitos e instala las skills de HyperFrames
 npm start       # abre http://localhost:4173
 ```
+
+### Acceso directo en el Escritorio (macOS)
+```bash
+npm run acceso-directo
+```
+Crea **Estudio de videos.app** en el Escritorio. Con doble clic arranca el estudio (si no estaba corriendo) y abre la interfaz en el navegador.
+
+### Música y efectos con Epidemic Sound
+Si tienes cuenta de Epidemic Sound, conecta su MCP a Claude Code y el estudio lo usará para buscar, recortar y descargar música, efectos y voces cuando el proyecto no traiga los suyos. Buscar se permite en el storyboard; descargar, solo al producir. Guía oficial: https://developers.epidemicsound.com/docs/mcp/
 
 Los proyectos se guardan en la carpeta `espacios/` (cámbiala con la variable `ESTUDIO_DIR`). Cada proyecto es una carpeta normal que puedes abrir, respaldar o sincronizar.
 

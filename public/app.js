@@ -6,6 +6,17 @@ const $modal = document.getElementById('modal');
 let META = null;
 let sondeo = null;
 
+// Un solo sondeo activo a la vez. Antes, al recargar la vista sin limpiar el anterior,
+// el intervalo viejo seguía llamando a recargar() cada pocos segundos y la página parpadeaba.
+function vigilar(fn, ms) {
+  clearInterval(sondeo);
+  sondeo = setInterval(fn, ms);
+}
+function dejarDeVigilar() {
+  clearInterval(sondeo);
+  sondeo = null;
+}
+
 // ---------- utilidades ----------
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const kb = (b) => (b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`);
@@ -123,7 +134,7 @@ function vistaArchivo(slug, a, { borrar = true } = {}) {
 
 // ---------- rutas ----------
 async function enrutar() {
-  clearInterval(sondeo);
+  dejarDeVigilar();
   const partes = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
   if (!META) META = await api('/meta');
   try {
@@ -202,6 +213,7 @@ const MENU = [
 ];
 
 async function vistaProyecto(slug, seccion, extra) {
+  dejarDeVigilar();
   const d = await api(`/proyectos/${slug}`);
   const p = d.proyecto;
   const conteo = (k) => {
@@ -318,9 +330,12 @@ async function pintarDigerir(slug, enCurso, recargar) {
   const { pendientes } = await api(`/proyectos/${slug}/digerir`);
   if (enCurso) {
     el.innerHTML = `<div class="aviso-caja info"><span class="girando"></span> Analizando el material nuevo con el modelo más económico…</div>`;
-    sondeo = setInterval(async () => {
+    vigilar(async () => {
       const r = await api(`/proyectos/${slug}/digerir`);
-      if (!r.enCurso) recargar();
+      if (!r.enCurso) {
+        dejarDeVigilar();
+        recargar();
+      }
     }, 4000);
     return;
   }
@@ -818,11 +833,16 @@ async function vPedido($c, d, id, recargar) {
     }
   };
   if (r.enCurso) {
-    sondeo = setInterval(async () => {
+    vigilar(async () => {
       const n = await api(`/proyectos/${d.slug}/pedidos/${id}`);
-      if (!n.enCurso) return recargar();
+      if (!n.enCurso) {
+        dejarDeVigilar();
+        return recargar();
+      }
+      if (reg.textContent === n.registro) return;
+      const alFinal = reg.scrollHeight - reg.scrollTop - reg.clientHeight < 40;
       reg.textContent = n.registro;
-      reg.scrollTop = reg.scrollHeight;
+      if (alFinal) reg.scrollTop = reg.scrollHeight;
     }, 3000);
   }
 }

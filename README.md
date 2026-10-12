@@ -49,6 +49,18 @@ Si tienes cuenta de Epidemic Sound, conecta su MCP a Claude Code y el estudio lo
 
 Los proyectos se guardan en la carpeta `espacios/` (cámbiala con la variable `ESTUDIO_DIR`). Cada proyecto es una carpeta normal que puedes abrir, respaldar o sincronizar.
 
+## Auto postproducción
+Para videos que ya están cortados (con su voz en off):
+1. Sube el video. La voz se transcribe en tu Mac con `npx hyperframes transcribe` (whisper.cpp o Parakeet): no gasta créditos ni tokens. La primera vez descarga el modelo. También puedes importar subtítulos `.srt` o `.vtt` de tu editor.
+2. Selecciona frases en la transcripción. Aparece una barra para elegir el **tipo de contenido** (motion graphic, texto cinético, b-roll, toma de apoyo, escena literal, personaje…) y otra para el **enfoque** (publicidad, tutorial, cinematográfico…), con referencias visuales opcionales. Puedes agregar tus propios tipos y enfoques.
+3. Opcional: sube una foto del rostro. Sin foto, la IA diseña un personaje y lo repite en todos los clips con persona. Los modelos que no aceptan rostro como referencia (Kling 3.0, Veo, Cinema Studio…) lo usan a través de un fotograma inicial, y la estimación lo cobra.
+4. Elige el generador de video, el de imagen y el modelo de Claude. **Evaluar y generar** muestra créditos de Higgsfield (precios de `data/generadores.json`, medidos con `get_cost`) y tokens antes de empezar; el tope que apruebes no se puede pasar.
+5. Antes de generar con IA se escribe una **biblia visual** del trabajo (look, paleta, luz, lente, persona) y cada clip arma su prompt con una estructura fija (sujeto, acción, lugar, cámara, luz, color, estilo, continuidad, negativos). Así los clips combinan entre sí.
+6. Los tipos gráficos se hacen gratis con HyperFrames (sin acceso a Higgsfield). Los rótulos, textos y anotaciones salen como capa transparente `.mov`.
+7. Cada clip se entrega en `salidas/<id>/` con las medidas, fps y duración exactas de su frase, sin audio, nombrado con su número y tiempo de entrada. Hay `indice.csv`, una EDL para Premiere o DaVinci y una vista previa con los clips sobre tu video.
+
+Opciones en `config.local.json`: `"postpro": { "paralelo": 2 }` (clips a la vez) y `"transcripcion": { "modelo": "small" }` (modelo de whisper: `base`, `small`, `medium`, `large-v3`).
+
 ## Configuración opcional
 Crea `config.local.json` en la raíz:
 ```json
@@ -70,6 +82,7 @@ espacios/mi-marca/
   identidad/ guiones/ voces/ referentes/ material/ musica/ webs/
   resumenes/        resúmenes únicos de cada archivo
   pedidos/<id>/     storyboard, composición, assets, registro y créditos
+  postpro/<id>/     video original, transcripción, biblia visual, persona y trabajo de cada clip
   salidas/<id>/     entregables finales
 ```
 

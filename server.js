@@ -9,6 +9,8 @@ import { CATEGORIAS, FORMATOS, PLATAFORMAS, MODOS, MOTORES, categoria } from './
 import { analizarWeb } from './lib/webs.js';
 import { generarFicha, archivosSinResumen, promptDigerir, promptStoryboard, promptProduccion, promptAjuste } from './lib/contexto.js';
 import { ejecutar, detener, enCurso, registrarCreditos, config } from './lib/runner.js';
+import { rutasPostpro } from './lib/api-postpro.js';
+import { listarTrabajos } from './lib/postpro.js';
 
 const RAIZ = path.dirname(fileURLToPath(import.meta.url));
 const PUERTO = Number(process.env.PORT || 4173);
@@ -64,7 +66,14 @@ app.get('/api/proyectos/:slug', r(async (req, res) => {
     consumo.tokens += (e.tokens?.entrada || 0) + (e.tokens?.salida || 0);
   }
   consumo.creditos = (proyecto.gastos || []).reduce((s, g) => s + (Number(g.creditos) || 0), 0);
-  res.json({ slug, proyecto, archivos, pedidos, consumo, digiriendo: enCurso(slug, 'digerir') });
+  // Los clips de Auto postproducción también cuentan en el consumo del proyecto.
+  const trabajos = await listarTrabajos(slug);
+  for (const t of trabajos) for (const e of [t.preparacion?.ejecucion, ...(t.fragmentos || []).map((f) => f.ejecucion)]) {
+    if (!e) continue;
+    consumo.costoUsd += e.costoUsd || 0;
+    consumo.tokens += (e.tokens?.entrada || 0) + (e.tokens?.salida || 0);
+  }
+  res.json({ slug, proyecto, archivos, pedidos, consumo, postpro: trabajos.length, digiriendo: enCurso(slug, 'digerir') });
 }));
 
 const EDITABLES = ['nombre', 'descripcion', 'color', 'identidad', 'requerimientos', 'presupuesto', 'referentes'];
@@ -304,6 +313,8 @@ app.post('/api/proyectos/:slug/pedidos/:id/detener', r(async (req, res) => {
   res.json({ ok: detener(req.params.slug, req.params.id) });
 }));
 
+rutasPostpro(app, r);
+
 // ---- Galería de estilos (awesome-opus5-5-videos) ----
 app.get('/api/estilos', r(async (req, res) => {
   const q = String(req.query.q || '').toLowerCase();
@@ -321,6 +332,12 @@ app.get('/api/estilos', r(async (req, res) => {
     })),
   });
 }));
+
+// Errores de subida (formato, tamaño) también como JSON, para que la interfaz los muestre.
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  res.status(err.status || 400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'El archivo es demasiado grande' : err.message });
+});
 
 app.listen(PUERTO, process.env.HOST || '127.0.0.1', () => {
   console.log(`\n  Estudio de videos listo en http://localhost:${PUERTO}`);

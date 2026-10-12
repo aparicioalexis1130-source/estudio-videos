@@ -1,0 +1,32 @@
+{
+  "consultado": "2026-10-12",
+  "nota": "Créditos por segundo medidos con get_cost de Higgsfield (9:16, 720p o resolución por defecto, sin audio cuando el modelo lo permite). Antes de cada generación Claude vuelve a cotizar y no pasa del tope aprobado.",
+  "video": [
+    { "id": "hyperframes", "nombre": "Gratis · HyperFrames", "proveedor": "Código", "creditosPorSegundo": 0, "rostro": "no", "gratis": true, "descripcion": "Motion graphics, textos y gráficos hechos con código. No gasta créditos." },
+    { "id": "kling3_0", "modelo": "kling3_0", "nombre": "Kling 3.0", "proveedor": "Kling", "creditosPorSegundo": 1.25, "duracion": { "min": 3, "max": 15 }, "rostro": "inicio", "parametros": { "mode": "std", "sound": "off" }, "aspectos": ["16:9", "9:16", "1:1"], "descripcion": "Cinemático y estable, muy buen precio." },
+    { "id": "kling3_0_pro", "modelo": "kling3_0", "nombre": "Kling 3.0 Pro", "proveedor": "Kling", "creditosPorSegundo": 1.5, "duracion": { "min": 3, "max": 15 }, "rostro": "inicio", "parametros": { "mode": "pro", "sound": "off" }, "aspectos": ["16:9", "9:16", "1:1"], "descripcion": "Kling 3.0 en calidad alta." },
+    { "id": "kling3_0_turbo", "modelo": "kling3_0_turbo", "nombre": "Kling 3.0 Turbo", "proveedor": "Kling", "creditosPorSegundo": 1.5, "duracion": { "min": 3, "max": 15 }, "rostro": "inicio", "aspectos": ["16:9", "9:16", "1:1"], "descripcion": "Rápido, para muchas tomas." },
+    { "id": "kling_o3_image_reference", "modelo": "kling_o3_image_reference", "nombre": "Kling Omni 3 (referencias)", "proveedor": "Kling", "creditosPorSegundo": 1.25, "duracion": { "min": 3, "max": 15 }, "rostro": "referencia", "aspectos": ["16:9", "9:16", "1:1"], "descripcion": "Usa imágenes de referencia: bueno para mantener la misma cara." },
+    { "id": "seedance_2_5", "modelo": "seedance_2_5", "nombre": "Seedance 2.5", "proveedor": "Bytedance", "creditosPorSegundo": 7, "duracion": { "min": 4, "max": 30 }, "rostro": "referencia", "parametros": { "generate_audio": false }, "aspectos": ["auto", "16:9", "9:16", "4:3", "3:4", "1:1", "21:9"], "descripcion": "Lo más nuevo de Seedance, con referencias de identidad." },
+    { "id": "seedance_2_0", "modelo": "seedance_2_0", "nombre": "Seedance 2.0", "proveedor": "Bytedance", "creditosPorSegundo": 4.5, "duracion": { "min": 4, "max": 15 }, "rostro": "referencia", "parametros": { "generate_audio": false }, "aspectos": ["auto", "16:9", "9:16", "4:3", "3:4", "1:1", "21:9"], "descripcion": "Referencias de identidad y producto." },
+    { "id": "seedance_2_0_mini", "modelo": "seedance_2_0_mini", "nombre": "Seedance 2.0 Mini", "proveedor": "Bytedance", "creditosPorSegundo": 1, "duracion": { "min": 4, "max": 15 }, "rostro": "referencia", "parametros": { "generate_audio": false }, "aspectos": ["auto", "16:9", "9:16", "4:3", "3:4", "1:1", "21:9"], "descripcion": "Económico y acepta tu rostro como referencia." },
+    { "id": "veo3_1", "modelo": "veo3_1", "nombre": "Google Veo 3.1", "proveedor": "Google", "creditosPorSegundo": 4, "opciones": [4, 6, 8], "rostro": "inicio", "aspectos": ["16:9", "9:16"], "descripcion": "Ultra realista." },
+    { "id": "veo3_1_lite", "modelo": "veo3_1_lite", "nombre": "Google Veo 3.1 Lite", "proveedor": "Google", "creditosPorSegundo": 1.5, "opciones": [4, 6, 8], "rostro": "inicio", "parametros": { "generate_audio": false }, "aspectos": ["16:9", "9:16"], "descripcion": "Veo económico." },
+    { "id": "minimax_h3", "modelo": "minimax_h3", "nombre": "MiniMax H3", "proveedor": "MiniMax", "creditosPorSegundo": 2, "duracion": { "min": 4, "max": 15 }, "rostro": "referencia", "aspectos": ["auto", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"], "descripcion": "2K, con referencias." },
+    { "id": "wan3_0", "modelo": "wan3_0", "nombre": "Wan 3.0", "proveedor": "Wan", "creditosPorSegundo": 1.75, "duracion": { "min": 2, "max": 30 }, "rostro": "referencia", "parametros": { "generate_audio": false }, "aspectos": ["auto", "16:9", "9:16", "1:1", "4:3", "3:4"], "descripcion": "Buen precio, con referencias de identidad." },
+    { "id": "cinematic_studio_3_0", "modelo": "cinematic_studio_3_0", "nombre": "Cinema Studio 3.0", "proveedor": "Higgsfield", "creditosPorSegundo": 5, "duracion": { "min": 4, "max": 15 }, "rostro": "inicio", "aspectos": ["auto", "21:9", "16:9", "4:3", "1:1", "3:4", "9:16"], "descripcion": "Calidad de cine (720p)." },
+    { "id": "cinematic_studio_video_v2", "modelo": "cinematic_studio_video_v2", "nombre": "Cinema Studio 2", "proveedor": "Higgsfield", "creditosPorSegundo": 1.5, "duracion": { "min": 3, "max": 12 }, "rostro": "inicio", "aspectos": ["1:1", "4:3", "3:4", "16:9", "9:16"], "descripcion": "Cinemático y económico." },
+    { "id": "grok_video_v15_lite", "modelo": "grok_video_v15_lite", "nombre": "Grok Imagine 1.5 Lite", "proveedor": "xAI", "creditosPorSegundo": 1, "duracion": { "min": 1, "max": 15 }, "rostro": "inicio", "aspectos": ["auto", "16:9", "9:16", "4:3", "3:4", "1:1", "3:2", "2:3"], "descripcion": "El más barato por segundo." }
+  ],
+  "imagen": [
+    { "id": "nano_banana_pro", "nombre": "Nano Banana Pro", "creditos": 2, "descripcion": "La mejor fidelidad de rostro." },
+    { "id": "nano_banana_2", "nombre": "Nano Banana 2", "creditos": 1.5, "descripcion": "Rápido y fiel." },
+    { "id": "seedream_v4_5", "nombre": "Seedream 4.5", "creditos": 1, "descripcion": "Económico." },
+    { "id": "gpt_image_2", "nombre": "GPT Image 2", "creditos": 0.5, "descripcion": "El más barato (calidad baja por defecto)." }
+  ],
+  "claude": [
+    { "id": "haiku", "nombre": "Claude Haiku", "entradaUsd": 1, "salidaUsd": 5, "descripcion": "El más barato. Bien para clips simples." },
+    { "id": "sonnet", "nombre": "Claude Sonnet", "entradaUsd": 3, "salidaUsd": 15, "descripcion": "Equilibrado. Recomendado." },
+    { "id": "opus", "nombre": "Claude Opus", "entradaUsd": 5, "salidaUsd": 25, "descripcion": "Máxima calidad en motion graphics y prompts." }
+  ]
+}

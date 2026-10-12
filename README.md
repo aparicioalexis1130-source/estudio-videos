@@ -26,7 +26,7 @@ Interfaz local para crear videos y piezas para redes sociales con la identidad d
 - [Node.js 22+](https://nodejs.org)
 - FFmpeg (macOS: `brew install ffmpeg` · Windows: `winget install ffmpeg`)
 - [Claude Code](https://claude.com/claude-code) con tu cuenta iniciada
-- El MCP de Higgsfield agregado a Claude Code (sigue la guía de conexión de Higgsfield y comprueba con `claude mcp list`)
+- Higgsfield disponible en Claude Code: sirve el conector de Higgsfield de tu cuenta de claude.ai (aparece como `claude_ai_Higgsfield`) o el MCP agregado a mano (`Higgsfield`). Compruébalo con `claude mcp list`
 
 ## Instalación
 ```bash

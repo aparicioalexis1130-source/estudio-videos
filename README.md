@@ -11,9 +11,10 @@ Interfaz local para crear videos y piezas para redes sociales con la identidad d
    - Guiones, voces en off, referentes, material propio y música.
    - Requerimientos: público, plataformas, tono, qué evitar y presupuesto mensual.
 3. **Pedidos**: eliges qué crear (reel, motion graphic, tomas de apoyo, explicativo, promo de web, subtítulos, gráficos sobre video, video musical, anuncio o pieza estática), completas un formulario corto y opcionalmente eliges un estilo de la galería de 800+ videos hechos con Claude.
-4. **Storyboard primero**: Claude propone escenas, técnica por escena y costo estimado en créditos. En esta fase Higgsfield solo puede consultar y cotizar; generar está bloqueado.
-5. **Apruebas → producción**: se genera solo lo aprobado, sin pasar el tope de créditos. El MP4 queda en la Biblioteca del proyecto.
-6. **Ajustes**: pides cambios sobre lo entregado y se reutiliza lo ya hecho.
+4. **Motor de producción**: eliges con qué recursos se hace la pieza. **Automático** deja que Claude decida escena por escena; **Solo HyperFrames** usa código y tu material (cero créditos, Higgsfield bloqueado); **Solo Higgsfield** genera los visuales con IA; **Híbrido** usa tomas de Higgsfield con la capa gráfica de HyperFrames encima. Cada tipo de pieza trae un motor sugerido.
+5. **Storyboard primero**: Claude propone escenas, técnica por escena, costo estimado en créditos y una comparación de cuánto costaría con cada motor. Al aprobar puedes quedarte con su propuesta o elegir otro motor. En esta fase Higgsfield solo puede consultar y cotizar; generar está bloqueado.
+6. **Apruebas → producción**: se genera solo lo aprobado, sin pasar el tope de créditos. El MP4 queda en la Biblioteca del proyecto.
+7. **Ajustes**: pides cambios sobre lo entregado y se reutiliza lo ya hecho.
 
 ### Ahorro de tokens y créditos
 - Cada archivo nuevo se resume **una sola vez** con el modelo más económico, y los pedidos leen solo la ficha `contexto.md`.

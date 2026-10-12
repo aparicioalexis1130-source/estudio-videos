@@ -556,6 +556,7 @@ function vNuevoPedido($c, d) {
     archivos: new Set(),
     estilo: null,
     modo: p.presupuesto?.modo || 'equilibrado',
+    motor: 'auto',
   };
   const disponibles = ['guiones', 'voces', 'material', 'musica', 'referentes', 'identidad'].flatMap((s) => d.archivos[s].map((a) => ({ ...a, seccion: META.secciones[s].titulo })));
   const gastadoMes = (p.gastos || []).filter((g) => g.fecha?.slice(0, 7) === new Date().toISOString().slice(0, 7)).reduce((s, g) => s + g.creditos, 0);
@@ -582,7 +583,10 @@ function vNuevoPedido($c, d) {
       <div class="panel pila"><div class="paso"><span class="num">4</span><h2>Estilo de referencia (opcional)</h2></div>
         <div id="estilo"></div>
       </div>
-      <div class="panel pila"><div class="paso"><span class="num">5</span><h2>Presupuesto</h2></div>
+      <div class="panel pila"><div class="paso"><span class="num">5</span><h2>¿Con qué recursos?</h2></div>
+        <div class="rejilla" id="motores">${Object.entries(META.motores).map(([k, m]) => `<button class="opcion" data-motor="${k}"><b>${m.titulo}</b><small>${m.descripcion}</small><small class="sugerido" hidden>Sugerido para este tipo de pieza</small></button>`).join('')}</div>
+      </div>
+      <div class="panel pila"><div class="paso"><span class="num">6</span><h2>Presupuesto</h2></div>
         <div class="rejilla" id="modos">${Object.entries(META.modos).map(([k, m]) => `<button class="opcion" data-modo="${k}"><b>${m.titulo}</b><small>${m.descripcion}</small><small>Hasta ${m.topeCreditos} créditos por pedido</small></button>`).join('')}</div>
         <div class="fila"><label class="campo" style="width:220px">Tope de créditos de este pedido<input type="number" id="tope" min="0"></label>
           <span class="mini">Gastado este mes: ${num(gastadoMes)} de ${num(p.presupuesto?.topeCreditosMes ?? 0)} créditos.</span></div>
@@ -599,13 +603,23 @@ function vNuevoPedido($c, d) {
     estado.formato = cat.formato;
     marcar('#formatos button', 'f', cat.formato);
     $c.querySelector('#duracion').value = cat.duracion;
+    $c.querySelectorAll('#motores .sugerido').forEach((x) => (x.hidden = x.closest('.opcion').dataset.motor !== cat.motor));
+    elegirMotor(cat.motor || 'auto');
     if (!$c.querySelector('#titulo').value) $c.querySelector('#titulo').placeholder = cat.titulo;
   };
   const elegirModo = (k) => {
     estado.modo = k;
     marcar('#modos .opcion', 'modo', k);
-    $c.querySelector('#tope').value = META.modos[k].topeCreditos;
+    $c.querySelector('#tope').value = estado.motor === 'hyperframes' ? 0 : META.modos[k].topeCreditos;
   };
+  // Solo HyperFrames no gasta créditos: el tope queda en 0 y bloqueado.
+  function elegirMotor(k) {
+    estado.motor = k;
+    marcar('#motores .opcion', 'motor', k);
+    const tope = $c.querySelector('#tope');
+    tope.disabled = k === 'hyperframes';
+    tope.value = k === 'hyperframes' ? 0 : META.modos[estado.modo].topeCreditos;
+  }
   $c.querySelectorAll('#cats .opcion').forEach((b) => (b.onclick = () => elegirCategoria(b.dataset.cat)));
   $c.querySelectorAll('#formatos button').forEach((b) => (b.onclick = () => {
     estado.formato = b.dataset.f;
@@ -619,8 +633,10 @@ function vNuevoPedido($c, d) {
     };
   });
   $c.querySelectorAll('#modos .opcion').forEach((b) => (b.onclick = () => elegirModo(b.dataset.modo)));
+  $c.querySelectorAll('#motores .opcion').forEach((b) => (b.onclick = () => elegirMotor(b.dataset.motor)));
   marcar('#formatos button', 'f', estado.formato);
   elegirModo(estado.modo);
+  elegirMotor(estado.motor);
 
   const pintarEstilo = () => {
     const el = $c.querySelector('#estilo');
@@ -651,6 +667,7 @@ function vNuevoPedido($c, d) {
       archivos: [...$c.querySelectorAll('.lista-archivos input:checked')].map((i) => i.value),
       estilo: estado.estilo,
       modo: estado.modo,
+      motor: estado.motor,
       topeCreditos: $c.querySelector('#tope').value,
       notas: $c.querySelector('#notas').value,
       iniciar,
@@ -729,14 +746,17 @@ async function vPedido($c, d, id, recargar) {
   else if (x.estado === 'borrador' || x.estado === 'error') acciones = `<button class="btn primario" id="storyboard">${x.estado === 'error' ? 'Reintentar storyboard' : 'Crear storyboard'}</button>`;
 
   $c.innerHTML = `
-    <div class="encabezado"><div><div class="fila">${etiquetaEstado(x.estado)}<span class="mini">${esc(cat?.titulo)} · ${esc(x.formato)}${x.duracion ? ` · ${x.duracion}s` : ''} · modo ${esc(META.modos[x.modo]?.titulo)}</span></div>
+    <div class="encabezado"><div><div class="fila">${etiquetaEstado(x.estado)}<span class="mini">${esc(cat?.titulo)} · ${esc(x.formato)}${x.duracion ? ` · ${x.duracion}s` : ''} · ${esc(META.motores[x.motor]?.titulo || 'Automático')} · modo ${esc(META.modos[x.modo]?.titulo)}</span></div>
       <h1 style="margin-top:8px">${esc(x.titulo)}</h1><p class="sutil">${esc(x.objetivo)}</p></div>
       <div class="fila">${acciones}<button class="btn" id="copiar">Copiar brief</button></div></div>
     <div class="pila">
       ${r.enCurso ? `<div class="aviso-caja info"><span class="girando"></span> Claude está trabajando en ${x.estado === 'creando-storyboard' ? 'el storyboard' : 'la producción'}. Esta página se actualiza sola.</div>` : ''}
       ${x.estado === 'por-aprobar' ? `<div class="panel pila" style="border-color:var(--alerta)">
           <h2>Revisa y aprueba</h2>
-          <p class="sutil">Costo estimado: <b>${r.estimacion ? `${num(r.estimacion.creditos)} créditos de Higgsfield` : 'sin estimación'}</b>${r.estimacion?.resumen ? ` · ${esc(r.estimacion.resumen)}` : ''}. Tope del pedido: ${x.topeCreditos} créditos.</p>
+          <p class="sutil">Propuesta: <b>${esc(META.motores[r.estimacion?.motor]?.titulo || META.motores[x.motor]?.titulo || '')}</b> · costo estimado <b>${r.estimacion ? `${num(r.estimacion.creditos)} créditos de Higgsfield` : 'sin estimación'}</b>${r.estimacion?.resumen ? ` · ${esc(r.estimacion.resumen)}` : ''}.</p>
+          ${r.estimacion?.alternativas?.length ? `<div class="pila" style="gap:8px"><b>Elige con qué recursos producir</b>
+            <div class="rejilla" id="alternativas">${r.estimacion.alternativas.filter((a) => META.motores[a.motor]).map((a) => `<button class="opcion ${a.motor === (r.estimacion.motor || x.motor) ? 'activo' : ''}" data-motor="${a.motor}" data-creditos="${Number(a.creditos) || 0}"><b>${esc(META.motores[a.motor].titulo)}${a.motor === r.estimacion.motor ? ' · propuesto' : ''}</b><small>${num(a.creditos)} créditos estimados</small>${a.nota ? `<small>${esc(a.nota)}</small>` : ''}</button>`).join('')}</div>
+            <p class="mini">Si eliges un motor distinto al propuesto, Claude adapta el storyboard al producir.</p></div>` : ''}
           <textarea id="comentarios" placeholder="Cambios o comentarios antes de producir (opcional)"></textarea>
           <div class="fila entre"><label class="fila mini">Tope de créditos <input type="number" id="tope" value="${x.topeCreditos}" style="width:100px"></label>
           <div class="fila"><button class="btn" id="rehacer">Rehacer storyboard</button><button class="btn primario" id="aprobar">Aprobar y producir</button></div></div>
@@ -775,7 +795,15 @@ async function vPedido($c, d, id, recargar) {
   $c.querySelector('#storyboard')?.addEventListener('click', () => accion('storyboard'));
   $c.querySelector('#rehacer')?.addEventListener('click', () => accion('storyboard'));
   $c.querySelector('#detener')?.addEventListener('click', () => accion('detener'));
-  $c.querySelector('#aprobar')?.addEventListener('click', () => accion('aprobar', { comentarios: $c.querySelector('#comentarios').value, topeCreditos: $c.querySelector('#tope').value }));
+  let motorElegido = r.estimacion?.motor || x.motor;
+  $c.querySelectorAll('#alternativas .opcion').forEach((b) => (b.onclick = () => {
+    motorElegido = b.dataset.motor;
+    $c.querySelectorAll('#alternativas .opcion').forEach((o) => o.classList.toggle('activo', o === b));
+    const tope = $c.querySelector('#tope');
+    if (motorElegido === 'hyperframes') tope.value = 0;
+    else if (Number(tope.value) < Number(b.dataset.creditos)) tope.value = b.dataset.creditos;
+  }));
+  $c.querySelector('#aprobar')?.addEventListener('click', () => accion('aprobar', { comentarios: $c.querySelector('#comentarios').value, topeCreditos: $c.querySelector('#tope').value, motor: motorElegido }));
   $c.querySelector('#ajustar')?.addEventListener('click', () => {
     const cambios = $c.querySelector('#cambios').value.trim();
     if (!cambios) return aviso('Describe los cambios');

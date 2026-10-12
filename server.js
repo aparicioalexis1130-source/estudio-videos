@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import * as store from './lib/store.js';
-import { CATEGORIAS, FORMATOS, PLATAFORMAS, MODOS, categoria } from './lib/rutas.js';
+import { CATEGORIAS, FORMATOS, PLATAFORMAS, MODOS, MOTORES, categoria } from './lib/rutas.js';
 import { analizarWeb } from './lib/webs.js';
 import { generarFicha, archivosSinResumen, promptDigerir, promptStoryboard, promptProduccion, promptAjuste } from './lib/contexto.js';
 import { ejecutar, detener, enCurso, registrarCreditos, config } from './lib/runner.js';
@@ -29,7 +29,7 @@ const r = (fn) => (req, res) =>
 
 app.get('/api/meta', r(async (_req, res) => {
   const cfg = await config();
-  res.json({ categorias: CATEGORIAS, formatos: FORMATOS, plataformas: PLATAFORMAS, modos: MODOS, secciones: store.SECCIONES, espacios: store.ESPACIOS, claude: cfg.claude });
+  res.json({ categorias: CATEGORIAS, formatos: FORMATOS, plataformas: PLATAFORMAS, modos: MODOS, motores: MOTORES, secciones: store.SECCIONES, espacios: store.ESPACIOS, claude: cfg.claude });
 }));
 
 app.get('/api/proyectos', r(async (_req, res) => res.json(await store.listarProyectos())));
@@ -188,6 +188,7 @@ app.post('/api/proyectos/:slug/pedidos', r(async (req, res) => {
   const b = req.body || {};
   const cat = categoria(b.categoria);
   const modo = MODOS[b.modo] ? b.modo : 'equilibrado';
+  const motor = MOTORES[b.motor] ? b.motor : cat.motor || 'auto';
   const pedido = {
     id: nuevoId(cat.id),
     categoria: cat.id,
@@ -201,7 +202,9 @@ app.post('/api/proyectos/:slug/pedidos', r(async (req, res) => {
     estilo: b.estilo || null,
     notas: String(b.notas || ''),
     modo,
-    topeCreditos: Number.isFinite(Number(b.topeCreditos)) && b.topeCreditos !== '' ? Number(b.topeCreditos) : MODOS[modo].topeCreditos,
+    motor,
+    topeCreditos:
+      motor === 'hyperframes' ? 0 : Number.isFinite(Number(b.topeCreditos)) && b.topeCreditos !== '' ? Number(b.topeCreditos) : MODOS[modo].topeCreditos,
     estado: 'borrador',
     creado: new Date().toISOString(),
     ejecuciones: [],
@@ -220,7 +223,7 @@ async function lanzar(slug, pedido, fase, extra = '') {
   pedido.estado = fase === 'storyboard' ? 'creando-storyboard' : 'produciendo';
   await store.guardarPedido(slug, pedido);
   await ejecutar({
-    slug, id: pedido.id, fase, prompt, modelo,
+    slug, id: pedido.id, fase, prompt, modelo, motor: pedido.motor,
     carpetaRegistro: store.rutaProyecto(slug, 'pedidos', pedido.id),
     alTerminar: async (rs) => {
       const p = await store.leerPedido(slug, pedido.id);
@@ -273,6 +276,17 @@ app.post('/api/proyectos/:slug/pedidos/:id/storyboard', r(async (req, res) => {
 app.post('/api/proyectos/:slug/pedidos/:id/aprobar', r(async (req, res) => {
   const pedido = await store.leerPedido(req.params.slug, req.params.id);
   if (req.body?.topeCreditos !== undefined) pedido.topeCreditos = Number(req.body.topeCreditos) || 0;
+  // El storyboard propone un motor; el usuario puede quedarse con él o elegir otro al aprobar.
+  try {
+    const est = JSON.parse(await store.leerTexto(req.params.slug, 'pedidos', pedido.id, 'estimacion.json'));
+    if (MOTORES[est?.motor]) pedido.motorPropuesto = est.motor;
+  } catch {
+    // Sin estimación: se mantiene el motor del pedido.
+  }
+  const elegido = MOTORES[req.body?.motor] ? req.body.motor : pedido.motorPropuesto || pedido.motor;
+  pedido.motorAprobado = elegido;
+  pedido.motor = elegido;
+  if (elegido === 'hyperframes') pedido.topeCreditos = 0;
   pedido.aprobado = new Date().toISOString();
   await lanzar(req.params.slug, pedido, 'produccion', String(req.body?.comentarios || ''));
   res.json({ ok: true });

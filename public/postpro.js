@@ -10,6 +10,7 @@ const RUTAS = {
   material: { titulo: 'Con tu material (gratis)', corto: 'Tu material' },
   generador: { titulo: 'Generado con IA (créditos)', corto: 'IA' },
 };
+const SONIDOS = { no: 'Sin sonido', efectos: 'Efectos de sonido', 'efectos-musica': 'Efectos y música' };
 const IDIOMAS = { es: 'Español', en: 'Inglés', pt: 'Portugués', fr: 'Francés', it: 'Italiano', de: 'Alemán', auto: 'Detectar solo' };
 const ESTADOS = {
   pendiente: 'Por generar', 'en-cola': 'En cola', generando: 'Generando', listo: 'Listo', error: 'Error', cambiado: 'Cambió: regenerar',
@@ -173,6 +174,7 @@ async function vistaTrabajo($c, d, id, recargar) {
   }
 
   const ajustes = { ...CAT.ajustesDefecto, ...t.ajustes };
+  const sonidoGeneral = () => (!ajustes.sonido ? 'no' : ajustes.musica ? 'efectos-musica' : 'efectos');
   const palabras = t.transcripcion.palabras;
 
   $c.innerHTML = `${encabezado()}
@@ -192,6 +194,11 @@ async function vistaTrabajo($c, d, id, recargar) {
           <label class="campo">Enfoque general
             <select id="aj-enfoque">${CAT.enfoques.map((e) => `<option value="${e.id}" ${e.id === ajustes.enfoque ? 'selected' : ''}>${esc(e.titulo)}</option>`).join('')}</select>
             <span class="ayuda">Se usa en los clips donde no elijas otro.</span></label>
+          <div class="pila" style="gap:6px">
+            <label class="fila" style="gap:8px"><input type="checkbox" id="aj-sonido" ${ajustes.sonido ? 'checked' : ''}> <b>Clips con sonido</b></label>
+            <label class="fila mini" style="gap:8px;padding-left:22px" ${ajustes.sonido ? '' : 'hidden'} id="aj-musica-fila"><input type="checkbox" id="aj-musica" ${ajustes.musica ? 'checked' : ''}> Incluir música de fondo</label>
+            <span class="mini">Efectos de interfaz en los gráficos (whoosh, pop, clics) y sonido ambiente en las escenas, desde tu carpeta de música o Epidemic Sound. No gasta créditos. Puedes cambiarlo en cada clip.</span>
+          </div>
           <p class="mini">${esc(CAT.generadores.nota)} (${esc(CAT.generadores.consultado)})</p>
         </div>
       </div>
@@ -537,6 +544,7 @@ async function vistaTrabajo($c, d, id, recargar) {
           <button class="chip activo" data-editar>${esc(tipo?.titulo || 'Elegir tipo')}</button>
           <button class="chip" data-editar>${esc(enfoqueDe(f.enfoque)?.titulo || `Enfoque general`)}</button>
           ${tipo?.capa ? '<span class="chip">Capa transparente (.mov)</span>' : ''}
+          ${f.salida ? `<span class="chip">${f.conSonido ? '🔊 Con sonido' : '🔇 Sin sonido'}</span>` : ''}
         </div>
         <div class="dos" style="gap:10px">
           <label class="campo">Cómo se hace
@@ -549,6 +557,13 @@ async function vistaTrabajo($c, d, id, recargar) {
             <label class="campo" style="width:96px">Salida (s)<input type="number" step="0.05" min="0" data-campo="fin" value="${f.fin}" ${ocupado ? 'disabled' : ''}></label>
           </div>
         </div>
+        <label class="campo">Sonido
+          <select data-campo="sonido" ${ocupado ? 'disabled' : ''}>
+            <option value="">Como el general (${SONIDOS[sonidoGeneral()]})</option>
+            ${Object.entries(SONIDOS).map(([k, v]) => `<option value="${k}" ${f.sonido === k ? 'selected' : ''}>${v}</option>`).join('')}
+          </select></label>
+        ${f.sonidoAviso && f.salida ? `<p class="mini">${esc(f.sonidoAviso)}</p>` : ''}
+        ${f.sonidoPendiente && f.salida && !ocupado ? `<div class="aviso-caja fila entre"><span>Cambiaste el sonido de este clip.</span>${r.generando ? '' : '<button class="btn chico primario" data-sonido>Actualizar solo el sonido (gratis)</button>'}</div>` : ''}
         ${ruta === 'generador' ? `<label class="fila mini" style="gap:6px"><input type="checkbox" data-campo="persona" ${est?.persona ? 'checked' : ''} ${ocupado ? 'disabled' : ''}> Aparece la persona (${t.rostro ? 'tu rostro' : 'personaje de la IA'})</label>
           ${est?.rostroNota ? `<p class="mini">${esc(est.rostroNota)}</p>` : ''}
           <p class="mini">${esc(est?.generadorNombre || '')}: ${est?.tomas > 1 ? `${est.tomas} tomas, ` : ''}${cr(est?.cobrados)} s cobrados (el clip se ajusta a ${seg(f.fin - f.inicio)}).</p>` : ''}
@@ -594,6 +609,7 @@ async function vistaTrabajo($c, d, id, recargar) {
         guardarCampo({ refs: f.refs.filter((x) => x !== b.dataset.quitarRef) });
       }));
       $k.querySelector('[data-generar]')?.addEventListener('click', () => confirmarGeneracion([fid]));
+      $k.querySelector('[data-sonido]')?.addEventListener('click', () => actualizarSonido([fid]));
       $k.querySelector('b').onclick = () => {
         const f = t.fragmentos.find((x) => x.id === fid);
         $video.currentTime = f.inicio;
@@ -613,7 +629,7 @@ async function vistaTrabajo($c, d, id, recargar) {
     $e.hidden = false;
     const vp = t.vistaPrevia;
     $e.innerHTML = `<div class="fila entre"><h2>Exportar a tu editor</h2><span class="mini">${listos.length} de ${t.fragmentos.length} clips listos</span></div>
-      <p class="mini">Cada clip dura exactamente lo que su frase, a ${t.video.ancho}×${t.video.alto} y ${t.video.fps} fps, sin audio. El nombre empieza con el número y el tiempo donde va (minutos-segundos-cuadros). La EDL los coloca solos en Premiere o DaVinci.</p>
+      <p class="mini">Cada clip dura exactamente lo que su frase, a ${t.video.ancho}×${t.video.alto} y ${t.video.fps} fps, sin la voz (${listos.some((f) => f.conSonido) ? 'los que tienen sonido traen solo sus efectos o música, en volumen bajo para ir debajo de tu voz' : 'sin audio'}). El nombre empieza con el número y el tiempo donde va (minutos-segundos-cuadros). La EDL los coloca solos en Premiere o DaVinci.</p>
       <div class="fila" style="gap:8px">
         <button class="btn primario" id="pp-carpeta">Abrir carpeta de clips</button>
         <a class="btn" href="${urlArchivo(d.slug, `salidas/${id}/indice.csv`)}" download>Índice (.csv)</a>
@@ -648,16 +664,30 @@ async function vistaTrabajo($c, d, id, recargar) {
       $b.innerHTML = '<span>Selecciona una frase en la transcripción para crear tu primer clip.</span>';
       return;
     }
+    const sonidoPendiente = t.fragmentos.filter((f) => f.sonidoPendiente && f.salida && f.estado === 'listo');
     $b.innerHTML = r.generando
-      ? `<span><span class="girando"></span> Generando: ${listos} listos, ${enMarcha} en marcha.</span><button class="btn peligro" id="pp-detener">Detener</button>`
+      ? `<span><span class="girando"></span> ${t.generacion?.soloSonido ? 'Actualizando sonido' : 'Generando'}: ${listos} listos, ${enMarcha} en marcha.</span><button class="btn peligro" id="pp-detener">Detener</button>`
       : `<span>${t.fragmentos.length} clips · ${est.gratis} gratis · ${est.pagos} con IA${sinTipo ? ` · <b style="color:var(--alerta)">${sinTipo} sin tipo</b>` : ''}</span>
+         ${sonidoPendiente.length ? `<button class="btn" id="pp-sonido">Actualizar sonido de ${sonidoPendiente.length} clip(s)</button>` : ''}
          <button class="btn primario" id="pp-generar" ${pendientes.length ? '' : 'disabled'}>${pendientes.length ? `Evaluar y generar ${pendientes.length === t.fragmentos.length ? 'todo' : `${pendientes.length} pendientes`}` : 'Todo generado'}</button>`;
     $b.querySelector('#pp-generar')?.addEventListener('click', () => confirmarGeneracion(null));
+    $b.querySelector('#pp-sonido')?.addEventListener('click', () => actualizarSonido(sonidoPendiente.map((f) => f.id)));
     $b.querySelector('#pp-detener')?.addEventListener('click', async () => {
       await api(`${base}/detener`, { json: {} });
       aviso('Deteniendo… los clips listos se conservan');
       await refrescar();
     });
+  }
+
+  // Rehace solo el sonido: quitarlo es inmediato; ponerlo usa a Claude con Epidemic Sound, sin créditos.
+  async function actualizarSonido(ids) {
+    try {
+      const res = await api(`${base}/sonido`, { json: { fragmentos: ids } });
+      aviso(res.clips && !r.generando ? 'Actualizando el sonido' : 'Listo');
+      await refrescar(true);
+    } catch (e) {
+      aviso(e.message);
+    }
   }
 
   async function confirmarGeneracion(ids) {
@@ -679,7 +709,7 @@ async function vistaTrabajo($c, d, id, recargar) {
         ${est.preparacion ? `<tr><td>—</td><td colspan="2">${C.esc(est.preparacion.motivo)}</td><td></td><td>${cr(est.preparacion.creditos)}</td><td>${C.num(est.preparacion.tokens)}</td></tr>` : ''}
         ${est.filas.map((x) => {
           const f = t.fragmentos.find((y) => y.id === x.id);
-          return `<tr><td>${orden[x.id]}</td><td>${C.esc(f.texto.slice(0, 60))}${f.texto.length > 60 ? '…' : ''}${x.rostroNota ? `<div class="mini">${C.esc(x.rostroNota)}</div>` : ''}</td><td>${C.esc(x.generadorNombre)}${x.tomas > 1 ? ` · ${x.tomas} tomas` : ''}</td><td>${seg(x.segundos)}${x.cobrados && x.cobrados !== x.segundos ? `<div class="mini">${cr(x.cobrados)} s cobrados</div>` : ''}</td><td>${x.creditos ? cr(x.creditos) : 'Gratis'}</td><td>${C.num(x.tokens)}</td></tr>`;
+          return `<tr><td>${orden[x.id]}</td><td>${C.esc(f.texto.slice(0, 60))}${f.texto.length > 60 ? '…' : ''}${x.rostroNota ? `<div class="mini">${C.esc(x.rostroNota)}</div>` : ''}</td><td>${C.esc(x.generadorNombre)}${x.tomas > 1 ? ` · ${x.tomas} tomas` : ''}<div class="mini">${SONIDOS[x.sonido] || ''}</div></td><td>${seg(x.segundos)}${x.cobrados && x.cobrados !== x.segundos ? `<div class="mini">${cr(x.cobrados)} s cobrados</div>` : ''}</td><td>${x.creditos ? cr(x.creditos) : 'Gratis'}</td><td>${C.num(x.tokens)}</td></tr>`;
         }).join('')}
         <tr class="total"><td></td><td colspan="3">Total</td><td>${cr(est.totales.creditos)}</td><td>${C.num(est.totales.tokens)}</td></tr></table></div>
       ${est.avisos.map((a) => `<div class="aviso-caja">${C.esc(a)}</div>`).join('')}
@@ -716,6 +746,11 @@ async function vistaTrabajo($c, d, id, recargar) {
     }
   };
   for (const k of ['video', 'imagen', 'claude', 'enfoque']) $c.querySelector(`#aj-${k}`).onchange = (e) => guardarAjuste(k, e.target.value);
+  $c.querySelector('#aj-sonido').onchange = (e) => {
+    $c.querySelector('#aj-musica-fila').hidden = !e.target.checked;
+    guardarAjuste('sonido', e.target.checked);
+  };
+  $c.querySelector('#aj-musica').onchange = (e) => guardarAjuste('musica', e.target.checked);
   $c.querySelector('#pp-corregir').onclick = (e) => {
     estadoVista.corrigiendo = !estadoVista.corrigiendo;
     e.target.classList.toggle('primario', estadoVista.corrigiendo);

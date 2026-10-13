@@ -242,3 +242,7 @@ mark.frag.hecho { text-decoration: underline 2px; text-underline-offset: 4px; }
 .pp-tabla th { position: sticky; top: 0; background: var(--panel); }
 .pp-tabla tr.total td { font-weight: 700; border-bottom: 0; }
 label.btn { cursor: pointer; }
+
+/* El atributo hidden siempre oculta, aunque el elemento use display flex o grid. */
+[hidden] { display: none !important; }
+@media (min-width: 1101px) { .pp-barra { left: auto; right: max(20px, calc((100vw - 1280px) / 2 + 20px)); transform: none; width: min(760px, calc(100% - 680px)); } }

@@ -57,7 +57,8 @@ Para videos que ya están cortados (con su voz en off):
 4. Elige el generador de video, el de imagen y el modelo de Claude. **Evaluar y generar** muestra créditos de Higgsfield (precios de `data/generadores.json`, medidos con `get_cost`) y tokens antes de empezar; el tope que apruebes no se puede pasar.
 5. Antes de generar con IA se escribe una **biblia visual** del trabajo (look, paleta, luz, lente, persona) y cada clip arma su prompt con una estructura fija (sujeto, acción, lugar, cámara, luz, color, estilo, continuidad, negativos). Así los clips combinan entre sí.
 6. Los tipos gráficos se hacen gratis con HyperFrames (sin acceso a Higgsfield). Los rótulos, textos y anotaciones salen como capa transparente `.mov`.
-7. Cada clip se entrega en `salidas/<id>/` con las medidas, fps y duración exactas de su frase, sin audio, nombrado con su número y tiempo de entrada. Hay `indice.csv`, una EDL para Premiere o DaVinci y una vista previa con los clips sobre tu video.
+7. **Sonido (opcional):** con la casilla "Clips con sonido" cada clip lleva efectos de interfaz (whoosh, pop, clics sincronizados con la animación) o sonido ambiente y foley en las escenas; con "Incluir música de fondo" suma una base instrumental baja. Se puede cambiar en cada clip. Sale de tu carpeta `musica/` o de Epidemic Sound, nunca de Higgsfield, así que no gasta créditos. Si cambias el sonido de un clip ya hecho, "Actualizar solo el sonido" lo rehace sin volver a generar la imagen.
+8. Cada clip se entrega en `salidas/<id>/` con las medidas, fps y duración exactas de su frase, sin la voz (con su sonido en volumen bajo si lo pediste), nombrado con su número y tiempo de entrada. Hay `indice.csv`, una EDL para Premiere o DaVinci y una vista previa con los clips sobre tu video.
 
 Opciones en `config.local.json`: `"postpro": { "paralelo": 2 }` (clips a la vez) y `"transcripcion": { "modelo": "small" }` (modelo de whisper: `base`, `small`, `medium`, `large-v3`).
 

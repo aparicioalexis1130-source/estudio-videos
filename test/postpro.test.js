@@ -62,7 +62,7 @@ test('timecodes, nombres y EDL', () => {
   assert.match(pp.nombreClip(f, 1, 30), /^01_00-00-01-00_el-cafe\.mp4$/);
   const edl = pp.edlExport(t);
   assert.match(edl, /001 {2}CLIP001 {2}V {5}C {8}00:00:00:00 00:00:00:27 00:00:01:00 00:00:01:27/);
-  assert.match(pp.csvExport(t, pp.TIPOS_BASE, pp.ENFOQUES_BASE), /B-roll,Publicidad \/ ads,el café/);
+  assert.match(pp.csvExport(t, pp.TIPOS_BASE, pp.ENFOQUES_BASE), /B-roll,Publicidad \/ ads,no,el café/);
 });
 
 test('los prompts tienen estructura fija y pasos seguidos', () => {
@@ -107,4 +107,55 @@ test('el clip queda con las medidas, fps y duración del original', { skip: !hay
   assert.equal(o.streams[0].height, 1280);
   assert.equal(o.streams[0].r_frame_rate, '30/1');
   assert.ok(Math.abs(Number(o.format.duration) - 3.2) < 0.05, o.format.duration);
+});
+
+test('la casilla de sonido general y la elección de cada clip', () => {
+  assert.equal(pp.sonidoDe({}, {}), 'no');
+  assert.equal(pp.sonidoDe({}, { sonido: true }), 'efectos');
+  assert.equal(pp.sonidoDe({}, { sonido: true, musica: true }), 'efectos-musica');
+  assert.equal(pp.sonidoDe({ sonido: 'no' }, { sonido: true }), 'no');
+  assert.equal(pp.sonidoDe({ sonido: 'efectos' }, { sonido: false }), 'efectos');
+  const t = trabajo();
+  assert.equal(pp.armarFragmento(t, { desde: 0, hasta: 1, sonido: 'raro' }).sonido, null);
+});
+
+test('con sonido el prompt pide efectos de interfaz o ambiente sin gastar créditos', () => {
+  const cat = { tipos: pp.TIPOS_BASE, enfoques: pp.ENFOQUES_BASE };
+  const t = trabajo({ ajustes: { sonido: true } });
+  const grafico = pp.promptFragmento(t, pp.armarFragmento(t, { desde: 0, hasta: 2, tipo: 'dato' }), cat);
+  assert.match(grafico, /INTERFAZ/);
+  assert.match(grafico, /sonido\.wav/);
+  assert.match(grafico, /Epidemic Sound/);
+  assert.match(grafico, /No generes audio con Higgsfield/);
+  const escena = pp.promptFragmento(t, { ...pp.armarFragmento(t, { desde: 3, hasta: 5, tipo: 'b-roll', sonido: 'efectos-musica' }), topeCreditos: 5 }, cat);
+  assert.match(escena, /AMBIENTE/);
+  assert.match(escena, /base musical/);
+  const mudo = pp.promptFragmento(trabajo(), pp.armarFragmento(trabajo(), { desde: 0, hasta: 2, tipo: 'dato' }), cat);
+  assert.doesNotMatch(mudo, /sonido\.wav/);
+  assert.match(mudo, /SIN audio/);
+  const solo = pp.promptSonido(t, pp.armarFragmento(t, { desde: 0, hasta: 2, tipo: 'dato' }), cat);
+  assert.match(solo, /NO lo cambies/);
+  assert.doesNotMatch(solo, /generate_video/);
+  // El sonido suma tokens pero no créditos.
+  const f = pp.armarFragmento(t, { desde: 0, hasta: 2, tipo: 'dato' });
+  const con = pp.estimar({ ...t, fragmentos: [f] }, cat);
+  const sin = pp.estimar({ ...t, ajustes: {}, fragmentos: [f] }, cat);
+  assert.ok(con.totales.tokens > sin.totales.tokens);
+  assert.equal(con.totales.creditos, 0);
+});
+
+test('el sonido se ajusta a la duración exacta del clip', { skip: !hayFfmpeg }, async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clip-'));
+  const entrada = path.join(dir, 'in.mp4');
+  const audio = path.join(dir, 'sonido.wav');
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'testsrc2=s=640x360:r=24:d=3', '-pix_fmt', 'yuv420p', entrada]);
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'sine=d=1', audio]);
+  const salida = path.join(dir, 'out.mp4');
+  await run.normalizar(entrada, salida, { ancho: 640, alto: 360, fps: 30, duracion: 2.5, audio });
+  const o = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-print_format', 'json', '-show_streams', salida]));
+  const a = o.streams.find((x) => x.codec_type === 'audio');
+  assert.ok(a, 'debe tener audio');
+  assert.ok(Math.abs(Number(a.duration) - 2.5) < 0.06, a.duration);
+  assert.equal(await run.tieneAudio(salida), true);
+  assert.equal(await run.tieneAudio(entrada), false);
 });

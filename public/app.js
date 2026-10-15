@@ -247,7 +247,7 @@ async function vistaProyecto(slug, seccion, extra) {
   const recargar = () => vistaProyecto(slug, seccion, extra);
   const vistas = { resumen: vResumen, identidad: vIdentidad, webs: vWebs, guiones: vGuiones, voces: vSeccionArchivos, referentes: vReferentes, material: vSeccionArchivos, musica: vSeccionArchivos, requerimientos: vRequerimientos, nuevo: vNuevoPedido, pedidos: vPedidos, biblioteca: vBiblioteca };
   if (seccion === 'pedidos' && extra) return vPedido($c, d, extra, recargar);
-  if (seccion === 'postpro') return montarPostpro({ api, esc, aviso, abrirModal, cerrarModal, vigilar, dejarDeVigilar, fecha, num }, $c, d, recargar, extra);
+  if (seccion === 'postpro') return montarPostpro({ api, esc, aviso, abrirModal, cerrarModal, vigilar, dejarDeVigilar, fecha, num, abrirGaleria }, $c, d, recargar, extra);
   await (vistas[seccion] || vResumen)($c, d, recargar, seccion);
   // Botones "Quitar" de cualquier archivo.
   $c.querySelectorAll('[data-borrar]').forEach((b) => {

@@ -159,3 +159,68 @@ test('el sonido se ajusta a la duración exacta del clip', { skip: !hayFfmpeg },
   assert.equal(await run.tieneAudio(salida), true);
   assert.equal(await run.tieneAudio(entrada), false);
 });
+
+test('un guion pegado da palabras con tiempos estimados y párrafos', () => {
+  const p = pp.palabrasDeGuion('# Título\n\n**Hola** a todos, hoy hablamos.\n\n- Primer punto aquí.', 'normal');
+  assert.deepEqual(p.map((w) => w.t), ['Título', 'Hola', 'a', 'todos,', 'hoy', 'hablamos.', 'Primer', 'punto', 'aquí.']);
+  assert.ok(p[1].par && p[6].par && !p[2].par);
+  for (let k = 1; k < p.length; k++) assert.ok(p[k].i >= p[k - 1].f, 'los tiempos avanzan');
+  const pps = p.length / p.at(-1).f;
+  assert.ok(pps > 1.6 && pps < 3, `ritmo razonable (${pps.toFixed(2)} palabras/s)`);
+  assert.ok(pp.palabrasDeGuion('uno dos tres cuatro', 'rapido').at(-1).f < pp.palabrasDeGuion('uno dos tres cuatro', 'lento').at(-1).f);
+});
+
+test('al editar el guion o vincular el video los clips se reubican', () => {
+  const viejas = pp.palabrasDeGuion('Hoy les quiero contar cómo tostamos el mejor café. Visita nuestra web.');
+  const nuevas = 'Hoy les voy a contar cómo tostamos el mejor café de Medellín. Entra a la tienda.'.split(' ').map((t, k) => ({ t, i: k, f: k + 0.8 }));
+  const frags = [
+    { id: 'a', desde: 5, hasta: 8, texto: 'tostamos el mejor café.', inicio: 0, fin: 1, estado: 'listo', salida: 'x.mp4' },
+    { id: 'b', desde: 9, hasta: 11, texto: 'Visita nuestra web.', inicio: 0, fin: 1 },
+  ];
+  const r = pp.remapearFragmentos(viejas, nuevas, frags);
+  assert.equal(r.fragmentos.length, 1);
+  assert.equal(r.fragmentos[0].texto, 'tostamos el mejor café');
+  assert.equal(r.fragmentos[0].inicio, 6);
+  assert.equal(r.fragmentos[0].estado, 'cambiado', 'cambió la duración: hay que regenerarlo');
+  assert.deepEqual(r.perdidos.map((f) => f.id), ['b']);
+});
+
+test('identidad, plantilla y observaciones llegan a los prompts y a la biblia', async () => {
+  const catalogo = await pp.leerCatalogo();
+  const t = trabajo({ video: { archivo: null, ancho: 1080, alto: 1920, fps: 30, duracion: 10 }, origen: 'guion' });
+  const f = pp.armarFragmento(t, { desde: 1, hasta: 3, tipo: 'dato' });
+  t.fragmentos.push(f);
+  assert.equal(pp.firmaEstilo(t), '', 'sin identidad no hay nada que preparar');
+  assert.equal(pp.estimar(t, catalogo).preparacion, null, 'un clip gratis sin estilo no necesita preparación');
+  t.plantilla = 'kinetic-bold';
+  t.identidad = { paleta: ['#ff0055'], tipografias: ['Montserrat'], archivos: { logos: ['logo.png'] } };
+  t.observaciones = [{ id: 'o1', texto: 'Nada de fondos blancos', clip: null }, { id: 'o2', texto: 'El número va grande', clip: f.id }];
+  const est = pp.estimar(t, catalogo);
+  assert.ok(est.preparacion && /identidad/.test(est.preparacion.motivo));
+  const prompt = pp.promptFragmento(t, f, catalogo);
+  assert.match(prompt, /tiempos son estimados/);
+  assert.match(prompt, /Tipografía cinética bold/);
+  assert.match(prompt, /#ff0055/);
+  assert.match(prompt, /identidad\/logos\/logo\.png/);
+  assert.match(prompt, /Nada de fondos blancos/);
+  assert.match(prompt, /El número va grande/);
+  assert.match(prompt, /mandan sobre los de la plantilla/);
+  const prep = pp.promptPreparacion(t, catalogo);
+  assert.match(prep, /"evaluacion"/);
+  assert.match(prep, /el guion \(el video aún no está grabado\)/);
+  // Ya preparada con esta identidad, no se repite; si cambia, sí.
+  t.preparacion = { estado: 'listo', firma: pp.firmaEstilo(t) };
+  assert.equal(pp.estimar(t, catalogo).preparacion, null);
+  t.identidad.paleta.push('#111111');
+  assert.ok(pp.estimar(t, catalogo).preparacion);
+});
+
+test('las plantillas sugeridas siguen el enfoque y los tipos de clip', async () => {
+  const catalogo = await pp.leerCatalogo();
+  assert.equal(pp.PLANTILLAS_ESTILO.length, 16);
+  const t = trabajo({ ajustes: { enfoque: 'corporativo' }, fragmentos: [{ tipo: 'dato' }, { tipo: 'infografia' }, { tipo: 'comparacion' }] });
+  const s = pp.sugerirPlantillas(t, catalogo);
+  assert.equal(s.length, 3);
+  assert.equal(s[0].id, 'dashboard-datos');
+  assert.match(s[0].razon, /Corporativo/);
+});

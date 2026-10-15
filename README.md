@@ -50,7 +50,7 @@ Si tienes cuenta de Epidemic Sound, conecta su MCP a Claude Code y el estudio lo
 Los proyectos se guardan en la carpeta `espacios/` (cámbiala con la variable `ESTUDIO_DIR`). Cada proyecto es una carpeta normal que puedes abrir, respaldar o sincronizar.
 
 ## Auto postproducción
-Para videos que ya están cortados (con su voz en off):
+Para videos que ya están cortados (con su voz en off) o para un guion que aún no se graba:
 1. Sube el video. La voz se transcribe en tu Mac con `npx hyperframes transcribe` (whisper.cpp o Parakeet): no gasta créditos ni tokens. La primera vez descarga el modelo. También puedes importar subtítulos `.srt` o `.vtt` de tu editor.
 2. Selecciona frases en la transcripción. Aparece una barra para elegir el **tipo de contenido** (motion graphic, texto cinético, b-roll, toma de apoyo, escena literal, personaje…) y otra para el **enfoque** (publicidad, tutorial, cinematográfico…), con referencias visuales opcionales. Puedes agregar tus propios tipos y enfoques.
 3. Opcional: sube una foto del rostro. Sin foto, la IA diseña un personaje y lo repite en todos los clips con persona. Los modelos que no aceptan rostro como referencia (Kling 3.0, Veo, Cinema Studio…) lo usan a través de un fotograma inicial, y la estimación lo cobra.
@@ -58,7 +58,11 @@ Para videos que ya están cortados (con su voz en off):
 5. Antes de generar con IA se escribe una **biblia visual** del trabajo (look, paleta, luz, lente, persona) y cada clip arma su prompt con una estructura fija (sujeto, acción, lugar, cámara, luz, color, estilo, continuidad, negativos). Así los clips combinan entre sí.
 6. Los tipos gráficos se hacen gratis con HyperFrames (sin acceso a Higgsfield). Los rótulos, textos y anotaciones salen como capa transparente `.mov`.
 7. **Sonido (opcional):** con la casilla "Clips con sonido" cada clip lleva efectos de interfaz (whoosh, pop, clics sincronizados con la animación) o sonido ambiente y foley en las escenas; con "Incluir música de fondo" suma una base instrumental baja. Se puede cambiar en cada clip. Sale de tu carpeta `musica/` o de Epidemic Sound, nunca de Higgsfield, así que no gasta créditos. Si cambias el sonido de un clip ya hecho, "Actualizar solo el sonido" lo rehace sin volver a generar la imagen.
-8. Cada clip se entrega en `salidas/<id>/` con las medidas, fps y duración exactas de su frase, sin la voz (con su sonido en volumen bajo si lo pediste), nombrado con su número y tiempo de entrada. Hay `indice.csv`, una EDL para Premiere o DaVinci y una vista previa con los clips sobre tu video.
+8. **Desde un guion, sin video:** pega el texto o sube un TXT, MD o DOCX (o elige uno de `guiones/`), con formato (9:16, 16:9, 1:1, 4:5) y ritmo de lectura. Los tiempos se estiman como si se leyera en voz alta y se resalta igual que en un video. "Editar texto" reubica los clips marcados; "Vincular video grabado" transcribe la grabación y los acomoda a los tiempos reales (los que cambian de duración o medida quedan para regenerar).
+9. **Identidad de marca (opcional):** paleta, tipografías (nombre o archivo), logos, recursos propios, páginas web (se leen sus colores y fuentes sin tokens) y referencias de estilo de edición (imágenes o videos). Antes de generar, Claude las evalúa y las deja en la biblia visual (`identidad`, `edicion`, `evaluacion`); si cambian, la biblia se rehace.
+10. **Estilo de edición (opcional):** 16 plantillas de motion graphics y edición (`data/plantillas-postpro.json`); se sugieren 3 según el enfoque y los tipos de clip, y se adaptan a los colores y tipografías de la marca. También se puede tomar inspiración de la galería de estilos.
+11. **Sugerencias y observaciones:** notas puntuales para todo el video o para un clip; entran en los prompts, y una nota sobre un clip ya hecho lo deja para regenerar.
+12. Cada clip se entrega en `salidas/<id>/` con las medidas, fps y duración exactas de su frase, sin la voz (con su sonido en volumen bajo si lo pediste), nombrado con su número y tiempo de entrada. Hay `indice.csv`, una EDL para Premiere o DaVinci y una vista previa con los clips sobre tu video.
 
 Opciones en `config.local.json`: `"postpro": { "paralelo": 2 }` (clips a la vez) y `"transcripcion": { "modelo": "small" }` (modelo de whisper: `base`, `small`, `medium`, `large-v3`).
 

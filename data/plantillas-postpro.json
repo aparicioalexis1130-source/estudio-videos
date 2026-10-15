@@ -1,0 +1,178 @@
+[
+  {
+    "id": "kinetic-bold",
+    "titulo": "Tipografía cinética bold",
+    "descripcion": "Palabras clave enormes que golpean al ritmo de la voz. Ideal para reels con mucho texto en pantalla.",
+    "tags": ["anuncio", "energetico", "texto-cinetico", "dato", "cta", "ugc", "humor"],
+    "paleta": ["#0B0B0F", "#FFFFFF", "#FFE14D", "#FF4D6D"],
+    "tipografia": "Sans condensada extra bold (Anton, Bebas Neue, Archivo Black), mayúsculas",
+    "movimiento": "Entradas con escala 120%→100% y rebote corto (back.out), cortes secos, 2-4 palabras por golpe",
+    "edicion": "Cortes al beat cada 0,4-0,8 s, zoom punch-in en palabras clave",
+    "css": { "fondo": "#0B0B0F", "texto": "#FFE14D", "fuente": "Impact, 'Arial Black', sans-serif", "peso": 900, "transformar": "uppercase", "espaciado": "-0.02em" }
+  },
+  {
+    "id": "minimal-corporativo",
+    "titulo": "Minimal corporativo",
+    "descripcion": "Limpio, mucho aire, líneas finas y animaciones suaves. Transmite confianza y orden.",
+    "tags": ["corporativo", "minimalista", "educativo", "infografia", "rotulo", "lista", "linea-tiempo"],
+    "paleta": ["#FFFFFF", "#111827", "#2563EB", "#E5E7EB"],
+    "tipografia": "Sans geométrica regular y semibold (Inter, Manrope, Helvetica Now)",
+    "movimiento": "Fundidos y desplazamientos de 20-40 px con ease-out suave, líneas que se dibujan",
+    "edicion": "Ritmo pausado, transiciones de 0,4 s, nada de sacudidas",
+    "css": { "fondo": "#FFFFFF", "texto": "#111827", "fuente": "Inter, 'Helvetica Neue', sans-serif", "peso": 600, "transformar": "none", "espaciado": "-0.01em", "acento": "#2563EB" }
+  },
+  {
+    "id": "apple-keynote",
+    "titulo": "Keynote premium",
+    "descripcion": "Fondos oscuros profundos, degradados sutiles y producto o cifra en el centro, estilo presentación de lanzamiento.",
+    "tags": ["lujo", "tecnologico", "anuncio", "dato", "mockup", "logo", "minimalista"],
+    "paleta": ["#000000", "#F5F5F7", "#A1A1A6", "#2997FF"],
+    "tipografia": "Sans neo-grotesca (SF Pro Display, Inter Display), titulares grandes y finos",
+    "movimiento": "Revelados por máscara, desenfoque que se aclara, cámara lenta sobre el producto",
+    "edicion": "Planos largos, transiciones en negro, música que respira",
+    "css": { "fondo": "linear-gradient(160deg,#1c1c1e,#000)", "texto": "#F5F5F7", "fuente": "-apple-system, 'Helvetica Neue', Inter, sans-serif", "peso": 600, "transformar": "none", "espaciado": "-0.03em", "acento": "#2997FF" }
+  },
+  {
+    "id": "neon-tech",
+    "titulo": "Neón tecnológico",
+    "descripcion": "Interfaces, grillas y brillos neón sobre negro. Para apps, IA, gaming y tecnología.",
+    "tags": ["tecnologico", "energetico", "mockup", "iconos", "infografia", "estilizado"],
+    "paleta": ["#05010F", "#00F0FF", "#B026FF", "#F5F5FF"],
+    "tipografia": "Mono o tecno (JetBrains Mono, Space Grotesk, Orbitron)",
+    "movimiento": "Glitch breve, escaneo de líneas, números que cuentan, brillos que pulsan",
+    "edicion": "Cortes rápidos con flashes, transiciones digitales",
+    "css": { "fondo": "radial-gradient(circle at 30% 20%,#2a0b4f,#05010F)", "texto": "#00F0FF", "fuente": "'Courier New', ui-monospace, monospace", "peso": 700, "transformar": "uppercase", "espaciado": "0.08em", "acento": "#B026FF", "sombra": "0 0 12px #00F0FF" }
+  },
+  {
+    "id": "glass-moderno",
+    "titulo": "Glassmorphism moderno",
+    "descripcion": "Tarjetas de vidrio esmerilado flotando sobre degradados de color. Fresco y actual.",
+    "tags": ["tecnologico", "lifestyle", "anuncio", "lista", "mockup", "cta"],
+    "paleta": ["#6D5EFC", "#FF7AC6", "#FFFFFF", "#1E1B4B"],
+    "tipografia": "Sans redondeada (Plus Jakarta Sans, Poppins)",
+    "movimiento": "Tarjetas que flotan con parallax suave, desenfoque de fondo, rebotes muy leves",
+    "edicion": "Ritmo medio, transiciones con deslizamiento",
+    "css": { "fondo": "linear-gradient(135deg,#6D5EFC,#FF7AC6)", "texto": "#FFFFFF", "fuente": "Poppins, 'Segoe UI', sans-serif", "peso": 700, "transformar": "none", "espaciado": "0", "tarjeta": true }
+  },
+  {
+    "id": "editorial-suizo",
+    "titulo": "Editorial suizo",
+    "descripcion": "Grilla estricta, tipografía protagonista y bloques de color plano. Serio y con criterio de diseño.",
+    "tags": ["noticias", "documental", "educativo", "cita", "dato", "infografia", "minimalista"],
+    "paleta": ["#F2EFE8", "#111111", "#E63B2E", "#1D3FBB"],
+    "tipografia": "Grotesca clásica (Helvetica, Neue Haas, Akzidenz) alineada a la izquierda",
+    "movimiento": "Bloques que barren la pantalla, texto que entra línea por línea, alineación perfecta",
+    "edicion": "Cortes limpios sobre la grilla, ritmo constante",
+    "css": { "fondo": "#F2EFE8", "texto": "#111111", "fuente": "'Helvetica Neue', Helvetica, Arial, sans-serif", "peso": 800, "transformar": "none", "espaciado": "-0.02em", "acento": "#E63B2E", "barra": true }
+  },
+  {
+    "id": "documental-netflix",
+    "titulo": "Documental de plataforma",
+    "descripcion": "Rótulos sobrios, mapas y archivos con textura, títulos serif. Para historias y datos reales.",
+    "tags": ["documental", "cinematografico", "emocional", "mapa", "linea-tiempo", "cita", "rotulo"],
+    "paleta": ["#0E0E0E", "#EDE6DA", "#B3261E", "#8C8273"],
+    "tipografia": "Serif de alto contraste para títulos (Playfair, GT Super) + sans pequeña para datos",
+    "movimiento": "Fundidos lentos, zoom Ken Burns, texto que aparece con tracking que se cierra",
+    "edicion": "Planos largos, cortes motivados, silencios",
+    "css": { "fondo": "#0E0E0E", "texto": "#EDE6DA", "fuente": "Georgia, 'Times New Roman', serif", "peso": 700, "transformar": "none", "espaciado": "0.01em", "acento": "#B3261E" }
+  },
+  {
+    "id": "cinematico-trailer",
+    "titulo": "Tráiler cinematográfico",
+    "descripcion": "Letterbox, luz dramática, títulos centrados con destellos. Para lanzamientos con impacto.",
+    "tags": ["cinematografico", "lujo", "emocional", "anuncio", "logo", "transicion"],
+    "paleta": ["#050505", "#E8D9B5", "#C08A3E", "#FFFFFF"],
+    "tipografia": "Serif o sans espaciada en mayúsculas (Trajan, Cinzel, Montserrat con tracking amplio)",
+    "movimiento": "Destellos de lente, partículas, títulos que se iluminan, empujes de cámara lentos",
+    "edicion": "Crescendo: cortes que se aceleran hacia el final, golpes de sonido",
+    "css": { "fondo": "radial-gradient(circle,#2b2214,#050505 70%)", "texto": "#E8D9B5", "fuente": "'Trajan Pro', Georgia, serif", "peso": 600, "transformar": "uppercase", "espaciado": "0.25em" }
+  },
+  {
+    "id": "doodle-dibujado",
+    "titulo": "Dibujado a mano",
+    "descripcion": "Trazos, flechas y garabatos que se dibujan solos. Cercano, divertido y explicativo.",
+    "tags": ["educativo", "tutorial", "humor", "anotaciones", "iconos", "lista", "ugc"],
+    "paleta": ["#FFFDF6", "#1F1F1F", "#FFB800", "#3DA5FF"],
+    "tipografia": "Manuscrita legible (Caveat, Patrick Hand) + sans para cifras",
+    "movimiento": "Trazos que se dibujan, ligera vibración tipo stop-motion a 12 fps",
+    "edicion": "Ritmo conversacional, anotaciones sobre el video",
+    "css": { "fondo": "#FFFDF6", "texto": "#1F1F1F", "fuente": "'Comic Sans MS', 'Marker Felt', cursive", "peso": 700, "transformar": "none", "espaciado": "0", "acento": "#FFB800", "subrayado": true }
+  },
+  {
+    "id": "collage-papel",
+    "titulo": "Collage de papel",
+    "descripcion": "Recortes, cinta adhesiva, texturas de papel y fotos recortadas. Creativo y artesanal.",
+    "tags": ["lifestyle", "humor", "retro", "stickers", "cita", "estilizado"],
+    "paleta": ["#F4EBDD", "#2B2B2B", "#E2725B", "#7FA88B"],
+    "tipografia": "Mezcla de serif editorial y letras recortadas tipo revista",
+    "movimiento": "Elementos que entran con rotación leve, stop-motion, sombras de papel",
+    "edicion": "Cortes juguetones, pequeños saltos de cuadro",
+    "css": { "fondo": "#F4EBDD", "texto": "#2B2B2B", "fuente": "Georgia, serif", "peso": 800, "transformar": "none", "espaciado": "0", "acento": "#E2725B", "girado": true }
+  },
+  {
+    "id": "retro-vhs",
+    "titulo": "Retro VHS",
+    "descripcion": "Grano, líneas de escaneo, colores saturados de los 80-90. Nostálgico y llamativo.",
+    "tags": ["retro", "humor", "energetico", "transicion", "texto-cinetico"],
+    "paleta": ["#1A0933", "#FF3CAC", "#2BD2FF", "#FAFF00"],
+    "tipografia": "Display retro (Monoton, Righteous) o pixel",
+    "movimiento": "Aberración cromática, saltos de tracking, texto con sombra desplazada",
+    "edicion": "Cortes con ruido de cinta y rebobinados",
+    "css": { "fondo": "linear-gradient(180deg,#1A0933,#3b0f5c)", "texto": "#FF3CAC", "fuente": "'Arial Black', sans-serif", "peso": 900, "transformar": "uppercase", "espaciado": "0.04em", "sombra": "3px 3px 0 #2BD2FF" }
+  },
+  {
+    "id": "isometrico-3d",
+    "titulo": "Isométrico 3D",
+    "descripcion": "Escenas isométricas, objetos 3D suaves y colores pastel. Para explicar procesos y productos.",
+    "tags": ["educativo", "tecnologico", "infografia", "estilizado", "producto", "lista"],
+    "paleta": ["#EEF2FF", "#4F46E5", "#22C55E", "#F59E0B"],
+    "tipografia": "Sans redondeada amable (Nunito, Rubik)",
+    "movimiento": "Objetos que se construyen por piezas, rotaciones suaves, cámara orbital",
+    "edicion": "Transiciones por zoom entre escenas",
+    "css": { "fondo": "#EEF2FF", "texto": "#4F46E5", "fuente": "Nunito, Rubik, 'Segoe UI', sans-serif", "peso": 800, "transformar": "none", "espaciado": "0", "acento": "#22C55E" }
+  },
+  {
+    "id": "dashboard-datos",
+    "titulo": "Dashboard de datos",
+    "descripcion": "Gráficos que crecen, contadores y tarjetas de métricas. Para resultados, cifras y comparaciones.",
+    "tags": ["dato", "infografia", "comparacion", "corporativo", "noticias", "tecnologico"],
+    "paleta": ["#0F172A", "#F8FAFC", "#22D3EE", "#A3E635"],
+    "tipografia": "Sans técnica con números tabulares (IBM Plex Sans, Inter con tnum)",
+    "movimiento": "Barras que crecen, números que cuentan, líneas que se trazan",
+    "edicion": "Un dato por pantalla, transiciones por deslizamiento",
+    "css": { "fondo": "#0F172A", "texto": "#F8FAFC", "fuente": "'IBM Plex Sans', Inter, sans-serif", "peso": 700, "transformar": "none", "espaciado": "-0.01em", "acento": "#22D3EE", "barras": true }
+  },
+  {
+    "id": "ugc-captions",
+    "titulo": "Subtítulos estilo creador",
+    "descripcion": "Palabras resaltadas en caja de color, emojis y ritmo de creador de contenido. Muy nativo de redes.",
+    "tags": ["ugc", "humor", "energetico", "anuncio", "texto-cinetico", "stickers", "cta"],
+    "paleta": ["#FFFFFF", "#000000", "#00E676", "#FFD600"],
+    "tipografia": "Sans gruesa con contorno (Montserrat Black, The Bold Font)",
+    "movimiento": "Palabra activa en caja de color que salta, pops con emojis",
+    "edicion": "Jump cuts, zooms rápidos, efectos de sonido en cada golpe",
+    "css": { "fondo": "linear-gradient(180deg,#3a3a3a,#111)", "texto": "#FFFFFF", "fuente": "Montserrat, 'Arial Black', sans-serif", "peso": 900, "transformar": "uppercase", "espaciado": "0", "acento": "#00E676", "caja": true }
+  },
+  {
+    "id": "lujo-elegante",
+    "titulo": "Lujo elegante",
+    "descripcion": "Serif fina, dorados y negros, movimientos lentos y precisos. Para marcas premium.",
+    "tags": ["lujo", "lifestyle", "cinematografico", "logo", "cita", "producto"],
+    "paleta": ["#0B0B0B", "#F7F3EA", "#C9A96E", "#3A3328"],
+    "tipografia": "Serif didona fina (Bodoni, Cormorant) con mucho tracking",
+    "movimiento": "Revelados lentos de opacidad, líneas doradas que se trazan, nada brusco",
+    "edicion": "Planos largos y silencios, fundidos a negro",
+    "css": { "fondo": "#0B0B0B", "texto": "#C9A96E", "fuente": "'Bodoni 72', Didot, Georgia, serif", "peso": 400, "transformar": "uppercase", "espaciado": "0.3em" }
+  },
+  {
+    "id": "organico-natural",
+    "titulo": "Orgánico y natural",
+    "descripcion": "Tonos tierra, formas suaves y texturas naturales. Para bienestar, comida, café y sostenibilidad.",
+    "tags": ["lifestyle", "emocional", "documental", "producto", "ambiente", "minimalista"],
+    "paleta": ["#F3EDE2", "#3E2F23", "#A47148", "#6B8F71"],
+    "tipografia": "Serif cálida (Fraunces, Recoleta) + sans ligera",
+    "movimiento": "Formas que crecen como gotas, desplazamientos lentos, hojas o granos que flotan",
+    "edicion": "Ritmo tranquilo, fundidos, luz cálida",
+    "css": { "fondo": "#F3EDE2", "texto": "#3E2F23", "fuente": "Fraunces, Georgia, serif", "peso": 700, "transformar": "none", "espaciado": "-0.01em", "acento": "#A47148" }
+  }
+]

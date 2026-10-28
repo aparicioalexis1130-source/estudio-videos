@@ -24,7 +24,10 @@ const donde = (cmd) => {
     return null;
   }
 };
-const carpetas = [...new Set([path.dirname(process.execPath), donde('claude'), donde('ffmpeg'), '/opt/homebrew/bin', '/usr/local/bin'].filter(Boolean))];
+// node se busca por el PATH al abrir (no por process.execPath): la ruta de Homebrew lleva la versión
+// (/opt/homebrew/Cellar/node/<versión>/bin) y desaparece con cada `brew upgrade node`.
+const estable = (d) => (d && !d.includes('/Cellar/') ? d : null);
+const carpetas = [...new Set([estable(donde('node')), donde('claude'), donde('ffmpeg'), '/opt/homebrew/bin', '/usr/local/bin', path.dirname(process.execPath)].filter(Boolean))];
 const PATH = `${carpetas.join(':')}:/usr/bin:/bin:/usr/sbin:/sbin`;
 const q = (s) => `quoted form of "${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 const url = `http://localhost:${PUERTO}`;
@@ -36,7 +39,7 @@ try
 on error
   -- Todo va en una subshell con las redirecciones afuera: si no, "do shell script" se queda
   -- esperando la salida de node y el applet nunca llega a abrir el navegador.
-  do shell script "(cd " & ${q(RAIZ)} & " && PATH=" & ${q(PATH)} & " PORT=${PUERTO} NO_ABRIR=1 exec nohup " & ${q(process.execPath)} & " server.js) > " & ${q(path.join(os.tmpdir(), 'estudio-videos.log'))} & " 2>&1 < /dev/null &"
+  do shell script "(cd " & ${q(RAIZ)} & " && PATH=" & ${q(PATH)} & " PORT=${PUERTO} NO_ABRIR=1 exec nohup node server.js) > " & ${q(path.join(os.tmpdir(), 'estudio-videos.log'))} & " 2>&1 < /dev/null &"
   repeat 40 times
     delay 0.5
     try

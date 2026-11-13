@@ -148,6 +148,24 @@ async function enrutar() {
 }
 window.addEventListener('hashchange', enrutar);
 
+// Aviso fijo si Claude Code perdió la sesión en este Mac (solo el usuario puede volver a entrar).
+async function revisarSesionClaude() {
+  try {
+    const s = await api('/estado');
+    const $s = document.getElementById('sesion');
+    $s.hidden = s.sesion.ok;
+    if (!s.sesion.ok) $s.innerHTML = `<b>Claude Code no tiene la sesión iniciada.</b> Abre la Terminal, escribe <code>claude</code> y luego <code>/login</code>. Cuando entres, vuelve a generar (los clips que faltaban quedaron pendientes). <button class="btn chico" id="sesion-lista">Ya inicié sesión</button>`;
+    $s.querySelector('#sesion-lista')?.addEventListener('click', async () => {
+      await api('/estado/sesion-lista', { json: {} });
+      $s.hidden = true;
+    });
+  } catch {
+    // El servidor no responde: el resto de la interfaz ya lo muestra.
+  }
+}
+revisarSesionClaude();
+setInterval(revisarSesionClaude, 15000);
+
 // ---------- inicio ----------
 async function vistaInicio() {
   $migas.innerHTML = '';

@@ -8,7 +8,7 @@ import * as store from './lib/store.js';
 import { CATEGORIAS, FORMATOS, PLATAFORMAS, MODOS, MOTORES, categoria } from './lib/rutas.js';
 import { analizarWeb } from './lib/webs.js';
 import { generarFicha, archivosSinResumen, promptDigerir, promptStoryboard, promptProduccion, promptAjuste } from './lib/contexto.js';
-import { ejecutar, detener, enCurso, registrarCreditos, config } from './lib/runner.js';
+import { ejecutar, detener, enCurso, registrarCreditos, config, estadoSesion, olvidarFalloSesion } from './lib/runner.js';
 import { rutasPostpro } from './lib/api-postpro.js';
 import { listarTrabajos } from './lib/postpro.js';
 
@@ -34,6 +34,8 @@ app.get('/api/meta', r(async (_req, res) => {
   res.json({ categorias: CATEGORIAS, formatos: FORMATOS, plataformas: PLATAFORMAS, modos: MODOS, motores: MOTORES, secciones: store.SECCIONES, espacios: store.ESPACIOS, claude: cfg.claude });
 }));
 
+app.get('/api/estado', r(async (_req, res) => res.json({ sesion: estadoSesion() })));
+app.post('/api/estado/sesion-lista', r(async (_req, res) => res.json({ sesion: olvidarFalloSesion() })));
 app.get('/api/proyectos', r(async (_req, res) => res.json(await store.listarProyectos())));
 
 app.post('/api/proyectos', r(async (req, res) => {
